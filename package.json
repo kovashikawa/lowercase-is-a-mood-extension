@@ -4,6 +4,7 @@
   "description": "Dev scripts only. The extension itself has no dependencies and no build step.",
   "scripts": {
     "test": "node --test tests/*.test.cjs",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=content.js --test-coverage-include=popup.js --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/*.test.cjs",
     "package": "sh scripts/package.sh"
   },
   "engines": {

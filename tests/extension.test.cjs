@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const contentScript = path.join(__dirname, '..', 'content.js');
 const storageListeners = new WeakMap();
 
-function page(origin, sharedStorage = new Map()) {
+function page(origin, sharedStorage = new Map(), { failWrites = false } = {}) {
   const classes = new Set();
   let messageListener;
   if (!storageListeners.has(sharedStorage)) storageListeners.set(sharedStorage, new Set());
@@ -17,6 +17,7 @@ function page(origin, sharedStorage = new Map()) {
       local: {
         async get(key) { return { [key]: sharedStorage.get(key) }; },
         async set(values) {
+          if (failWrites) throw Error('quota exceeded');
           for (const [key, value] of Object.entries(values)) {
             const oldValue = sharedStorage.get(key);
             sharedStorage.set(key, value);
@@ -42,9 +43,11 @@ function page(origin, sharedStorage = new Map()) {
       },
     },
   };
-  vm.runInNewContext(fs.readFileSync(contentScript, 'utf8'), { chrome, document, location: { origin } });
+  vm.runInNewContext(fs.readFileSync(contentScript, 'utf8'), { chrome, document, location: { origin } }, { filename: contentScript });
   return {
     classes,
+    listeners,
+    raw(message) { return messageListener(message, {}, () => assert.fail('must not respond')); },
     async send(type) {
       return new Promise((resolve) => {
         const asynchronous = messageListener({ type }, {}, resolve);
@@ -93,4 +96,28 @@ test('propagates state changes between open tabs on the same origin', async () =
   await first.send('toggle');
   assert.equal(applied(first), true);
   assert.equal(applied(second), true);
+});
+
+test('ignores messages that are not for this extension', () => {
+  const view = page('https://example.com');
+  assert.equal(view.raw({ type: 'something-else' }), undefined);
+  assert.equal(view.raw(undefined), undefined);
+});
+
+test('ignores storage changes for other keys and other storage areas', async () => {
+  const storage = new Map();
+  const view = page('https://example.com', storage);
+  await view.send('getState');
+  for (const listener of view.listeners) {
+    listener({ 'lowercase-mood:https://other.example': { newValue: true } }, 'local');
+    listener({ 'lowercase-mood:https://example.com': { newValue: true } }, 'sync');
+  }
+  assert.equal(view.classes.has('lowercase-mood-on'), false);
+});
+
+test('reports an error and keeps the page unchanged when saving fails', async () => {
+  const view = page('https://example.com', new Map(), { failWrites: true });
+  const reply = await view.send('toggle');
+  assert.equal(reply.error, 'Could not save this preference.');
+  assert.equal(view.classes.has('lowercase-mood-on'), false);
 });
