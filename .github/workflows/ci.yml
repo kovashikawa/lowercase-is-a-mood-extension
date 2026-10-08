@@ -40,7 +40,7 @@ jobs:
           node-version: 22
       - name: Build store zip
         run: npm run package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: extension-zip
           path: dist/*.zip
