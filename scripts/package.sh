@@ -10,5 +10,5 @@ out="$out_dir/lowercase-is-a-mood-$version.zip"
 
 mkdir -p "$out_dir"
 rm -f "$out"
-zip -X -q "$out" manifest.json content.js content.css popup.html popup.js
+zip -X -q "$out" manifest.json content.js content.css popup.html popup.js icons/icon-16.png icons/icon-48.png icons/icon-128.png
 echo "$out"
