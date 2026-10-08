@@ -6,7 +6,7 @@ const vm = require('node:vm');
 
 const popupScript = path.join(__dirname, '..', 'popup.js');
 
-function popup({ available = true, enabled = false } = {}) {
+function popup({ available = true, enabled = false, failToggle = false, errorOnToggle = false, errorOnGet = false, emptyReply = false } = {}) {
   const button = {
     disabled: true,
     attributes: {},
@@ -23,6 +23,10 @@ function popup({ available = true, enabled = false } = {}) {
         assert.equal(id, 1);
         assert.equal(options.frameId, 0);
         if (!available) throw Error('No content script on this page');
+        if (emptyReply) return undefined;
+        if (message.type === 'getState' && errorOnGet) return { error: 'Could not read this preference.' };
+        if (message.type === 'toggle' && failToggle) throw Error('tab closed');
+        if (message.type === 'toggle' && errorOnToggle) return { error: 'Could not save this preference.' };
         if (message.type === 'toggle') enabled = !enabled;
         return { enabled };
       },
@@ -31,7 +35,7 @@ function popup({ available = true, enabled = false } = {}) {
   vm.runInNewContext(fs.readFileSync(popupScript, 'utf8'), {
     chrome,
     document: { getElementById(id) { return id === 'toggle' ? button : status; } },
-  });
+  }, { filename: popupScript });
   return { button, status, async ready() { await new Promise((resolve) => setImmediate(resolve)); } };
 }
 
@@ -48,6 +52,34 @@ test('opens in the saved state and switches both ways', async () => {
 
 test('disables the toggle on pages Chrome does not allow extensions to change', async () => {
   const view = popup({ available: false });
+  await view.ready();
+  assert.equal(view.button.disabled, true);
+  assert.match(view.status.textContent, /unavailable/i);
+});
+
+test('shows unavailable when a click cannot reach the page', async () => {
+  const view = popup({ failToggle: true });
+  await view.ready();
+  await view.button.click();
+  assert.match(view.status.textContent, /unavailable/i);
+});
+
+test('shows unavailable when the page reports a save error', async () => {
+  const view = popup({ errorOnToggle: true });
+  await view.ready();
+  await view.button.click();
+  assert.match(view.status.textContent, /unavailable/i);
+});
+
+test('shows unavailable when the page reports an error on load', async () => {
+  const view = popup({ errorOnGet: true });
+  await view.ready();
+  assert.equal(view.button.disabled, true);
+  assert.match(view.status.textContent, /unavailable/i);
+});
+
+test('shows unavailable when the page sends no reply', async () => {
+  const view = popup({ emptyReply: true });
   await view.ready();
   assert.equal(view.button.disabled, true);
   assert.match(view.status.textContent, /unavailable/i);
