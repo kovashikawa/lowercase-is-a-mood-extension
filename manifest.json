@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Lowercase Is a Mood",
+  "version": "0.1.0",
+  "description": "A display-only lowercase switch for each site.",
+  "permissions": ["storage", "activeTab"],
+  "action": {
+    "default_title": "Lowercase Is a Mood",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_start"
+    }
+  ]
+}

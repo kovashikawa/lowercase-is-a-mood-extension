@@ -1,0 +1,4 @@
+html.lowercase-mood-on,
+html.lowercase-mood-on * {
+  text-transform: lowercase !important;
+}
