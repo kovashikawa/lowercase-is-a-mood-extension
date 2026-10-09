@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}
+body{width:1280px;height:800px;background:#F4F4F4;color:#1E1E1E;font:16px/1.55 system-ui,-apple-system,"Helvetica Neue",sans-serif;position:relative;overflow:hidden}
+.row{position:absolute;left:64px;right:64px;top:92px;display:flex;gap:48px}
+.col{flex:1}
+.win{background:#fff;border:1px solid #D8D8D8;border-radius:12px;height:560px;padding:36px 40px;position:relative}
+.nav{display:flex;gap:20px;font-size:14px;color:#555;margin-bottom:34px}
+.nav b{color:#1E1E1E;font-weight:600}
+h1{font-size:30px;line-height:1.2;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+.by{font-size:13px;color:#777;margin-bottom:22px}
+p{font-size:16px;color:#333;margin-bottom:16px}
+.btn{display:inline-block;margin-top:8px;padding:9px 16px;border:1px solid #1E1E1E;border-radius:8px;font-size:14px;font-weight:600}
+.low *{text-transform:lowercase}
+.low .pop,.low .pop *{text-transform:none}
+.pop{position:absolute;top:-4px;right:-4px;background:#fff;border:1px solid #CFCFCF;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.12);padding:10px 14px}
+.tog{font:400 26px/1 system-ui,sans-serif;display:block;padding:4px 6px}
+.tog span{display:inline-block}
+.tog .a,.tog .A{min-width:.68em;text-align:center}
+.tog .s{opacity:.45}
+.on .a,.off .A{font-weight:700}
+.cap{margin-top:22px;font-size:15px;color:#555;text-align:center}
+.top{position:absolute;top:34px;left:64px;font-size:15px;color:#555}
+</style></head><body>
+<div class="top">One switch per site. Same page, quieter.</div>
+<div class="row">
+ <div class="col"><div class="win">
+   <div class="pop"><span class="tog off"><span class="a">a</span><span class="s">/</span><span class="A">A</span></span></div>
+   <div class="nav"><b>Field Notes</b><span>Archive</span><span>About</span></div>
+   <h1>Why Every Interface Is Shouting At You</h1>
+   <div class="by">By Marta Quinn · 4 Min Read</div>
+   <p>Capital letters carry a lot of weight. Titles, buttons and menus all compete for attention before you read a single word.</p>
+   <p>Flip the switch and the page relaxes. Same words, same layout, quieter.</p>
+   <span class="btn">Subscribe To The Newsletter</span>
+ </div><div class="cap">Original case</div></div>
+ <div class="col"><div class="win low">
+   <div class="pop"><span class="tog on"><span class="a">a</span><span class="s">/</span><span class="A">A</span></span></div>
+   <div class="nav"><b>Field Notes</b><span>Archive</span><span>About</span></div>
+   <h1>Why Every Interface Is Shouting At You</h1>
+   <div class="by">By Marta Quinn · 4 Min Read</div>
+   <p>Capital letters carry a lot of weight. Titles, buttons and menus all compete for attention before you read a single word.</p>
+   <p>Flip the switch and the page relaxes. Same words, same layout, quieter.</p>
+   <span class="btn">Subscribe To The Newsletter</span>
+ </div><div class="cap">Lowercase, remembered for this site</div></div>
+</div></body></html>
