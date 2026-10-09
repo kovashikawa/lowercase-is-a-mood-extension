@@ -9,7 +9,7 @@ Email dev@kovashikawa.com with a description and steps to reproduce. Please do n
 - No network access: the code uses no `fetch`, `XMLHttpRequest`, or remote scripts, and CI fails if any appear.
 - No `eval` or dynamic code.
 - No runtime dependencies and no build step. The shipped files are the files in this repo.
-- Permissions are limited to `storage` and `activeTab`, plus a content script on all sites that only toggles a CSS class. CI fails if a permission is added without updating the allowlist in `tests/manifest.test.cjs`.
+- Permissions are limited to `storage`, plus a content script on all sites that only toggles a CSS class. CI fails if a permission is added without updating the allowlist in `tests/manifest.test.cjs`.
 
 ## Verifying a release
 

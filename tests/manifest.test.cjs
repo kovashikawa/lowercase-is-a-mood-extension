@@ -14,7 +14,7 @@ const runtimeFiles = ['content.js', 'content.css', 'popup.html', 'popup.js'];
 
 // Changing this list is a deliberate act: new permissions trigger a store re-review
 // and a warning for existing users.
-const allowedPermissions = ['storage', 'activeTab'];
+const allowedPermissions = ['storage'];
 
 test('manifest is Manifest V3 with a valid version', () => {
   assert.equal(manifest.manifest_version, 3);
