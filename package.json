@@ -1,11 +1,16 @@
 {
   "name": "lowercase-is-a-mood-extension",
   "private": true,
-  "description": "Dev scripts only. The extension itself has no dependencies and no build step.",
+  "description": "Dev tooling only. The extension itself has no dependencies and no build step.",
   "scripts": {
     "test": "node --test tests/*.test.cjs",
     "coverage": "node --test --experimental-test-coverage --test-coverage-include=content.js --test-coverage-include=popup.js --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/*.test.cjs",
+    "e2e": "node tests/e2e/e2e.cjs",
+    "perf": "node tests/perf/perf.cjs",
     "package": "sh scripts/package.sh"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
   },
   "engines": {
     "node": ">=22"
