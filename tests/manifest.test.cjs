@@ -9,11 +9,8 @@ const root = path.join(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const manifest = JSON.parse(read('manifest.json'));
 
-// Files that ship in the extension. Add new runtime files here and in scripts/package.sh.
 const runtimeFiles = ['content.js', 'content.css', 'popup.html', 'popup.js'];
 
-// Changing this list is a deliberate act: new permissions trigger a store re-review
-// and a warning for existing users.
 const allowedPermissions = ['storage'];
 
 test('manifest is Manifest V3 with a valid version', () => {

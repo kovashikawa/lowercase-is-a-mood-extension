@@ -1,6 +1,5 @@
 name: CodeQL
 
-# Skipped while the repo is private (code scanning needs GitHub Advanced Security there).
 on:
   pull_request:
   push:
