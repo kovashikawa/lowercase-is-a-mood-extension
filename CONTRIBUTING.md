@@ -4,7 +4,7 @@ This extension is deliberately tiny: plain JavaScript, Manifest V3, no dependenc
 
 ## Setup
 
-Node 20 or newer. Nothing to install.
+Node 22 or newer. Nothing to install.
 
 ```sh
 npm test             # unit tests plus manifest and package checks

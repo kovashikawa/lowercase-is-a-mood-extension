@@ -8,6 +8,6 @@
     "package": "sh scripts/package.sh"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }
