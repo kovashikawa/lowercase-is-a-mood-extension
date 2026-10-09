@@ -43,10 +43,17 @@ function page(origin, sharedStorage = new Map(), { failWrites = false } = {}) {
       },
     },
   };
-  vm.runInNewContext(fs.readFileSync(contentScript, 'utf8'), { chrome, document, location: { origin } }, { filename: contentScript });
+  let observe;
+  class MutationObserver {
+    constructor(callback) { observe = callback; }
+    observe() {}
+  }
+  vm.runInNewContext(fs.readFileSync(contentScript, 'utf8'), { chrome, document, location: { origin }, MutationObserver }, { filename: contentScript });
   return {
     classes,
     listeners,
+    pageRewritesClass() { classes.clear(); observe(); },
+    pageTouchesClass() { observe(); },
     raw(message) { return messageListener(message, {}, () => assert.fail('must not respond')); },
     async send(type) {
       return new Promise((resolve) => {
@@ -120,4 +127,19 @@ test('reports an error and keeps the page unchanged when saving fails', async ()
   const reply = await view.send('toggle');
   assert.equal(reply.error, 'Could not save this preference.');
   assert.equal(view.classes.has('lowercase-mood-on'), false);
+});
+
+test('re-applies the class when the page overwrites it', async () => {
+  const view = page('https://example.com');
+  await view.send('toggle');
+  view.pageRewritesClass();
+  assert.equal(applied(view), true);
+  assert.equal((await view.send('getState')).enabled, true);
+});
+
+test('leaves the class alone when it already matches', async () => {
+  const view = page('https://example.com');
+  await view.send('toggle');
+  view.pageTouchesClass();
+  assert.equal(applied(view), true);
 });

@@ -10,6 +10,10 @@
 
   const ready = chrome.storage.local.get(key).then((values) => render(values[key]));
 
+  new MutationObserver(() => {
+    if (document.documentElement.classList.contains(className) !== enabled) render(enabled);
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && Object.hasOwn(changes, key)) {
       render(changes[key].newValue);
