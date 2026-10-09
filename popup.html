@@ -6,34 +6,44 @@
   <title>Lowercase Is a Mood</title>
   <style>
     :root { color-scheme: light dark; }
-    body {
-      box-sizing: border-box;
-      width: 202px;
-      margin: 0;
-      padding: 16px;
-      font: 13px/1.4 system-ui, sans-serif;
-    }
+    body { margin: 0; padding: 10px 14px; }
     button {
-      padding: 0;
+      display: block;
+      padding: 4px 6px;
       border: 0;
       background: none;
       color: inherit;
-      font: 400 23px/1.2 system-ui, sans-serif;
+      font: 400 26px/1 system-ui, sans-serif;
       cursor: pointer;
     }
-    button:disabled { opacity: .45; cursor: default; }
-    button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+    button:disabled { opacity: .35; cursor: default; }
+    button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+    #lowercase, #original {
+      display: inline-block;
+      min-width: .68em;
+      text-align: center;
+      transition: font-weight .2s ease;
+    }
+    #slash { opacity: .45; }
     button[aria-pressed="true"] #lowercase,
     button[aria-pressed="false"] #original { font-weight: 700; }
-    #slash { padding: 0 4px; opacity: .55; }
-    p { margin: 10px 0 0; opacity: .7; }
+    #status {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #lowercase, #original { transition: none; }
+    }
   </style>
 </head>
 <body>
   <button id="toggle" type="button" aria-label="Toggle lowercase on this site" aria-pressed="false" disabled>
     <span id="lowercase">a</span><span id="slash">/</span><span id="original">A</span>
   </button>
-  <p id="status" role="status">Checking this page…</p>
+  <p id="status" role="status"></p>
   <script src="popup.js"></script>
 </body>
 </html>
