@@ -6,12 +6,16 @@ A Chrome extension version of the [site toggle](https://kovashikawa.com/design/p
 
 The choice is saved per origin, so tabs and reloads on that site use the same setting. The extension changes only CSS presentation. It does not rewrite text, form values, page source, or feeds, and it makes no network requests.
 
-## Install locally
+## Install
+
+[Add it from the Chrome Web Store](https://chromewebstore.google.com/detail/lowercase-is-a-mood/pdbkpobppnhekkcnahnabccppcbmahbe), then pin it to the toolbar for one-click access to the popup. Pages that were open before you installed it need one reload.
+
+## Build from source
 
 1. Open `chrome://extensions`.
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and select this folder.
-4. Open a regular web page and click the extension's toolbar icon. Pin it for one-click access to the popup.
+4. Open a regular web page and click the extension's toolbar icon.
 
 Chrome asks for access to all websites because the extension must load its small CSS and script on pages before you toggle them. Preferences stay in local Chrome storage. Chrome's internal pages, the Web Store, and some embedded or shadow-DOM content cannot be changed. Existing tabs may need one reload after installation.
 
