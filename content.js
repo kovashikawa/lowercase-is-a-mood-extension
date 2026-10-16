@@ -2,13 +2,16 @@
   const key = `lowercase-mood:${location.origin}`;
   const className = 'lowercase-mood-on';
   let enabled = false;
+  let changedBeforeRead = false;
 
   function render(value) {
     enabled = Boolean(value);
     document.documentElement.classList.toggle(className, enabled);
   }
 
-  const ready = chrome.storage.local.get(key).then((values) => render(values[key]));
+  const ready = chrome.storage.local.get(key).then((values) => {
+    if (!changedBeforeRead) render(values[key]);
+  });
 
   new MutationObserver(() => {
     if (document.documentElement.classList.contains(className) !== enabled) render(enabled);
@@ -16,6 +19,7 @@
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && Object.hasOwn(changes, key)) {
+      changedBeforeRead = true;
       render(changes[key].newValue);
     }
   });
