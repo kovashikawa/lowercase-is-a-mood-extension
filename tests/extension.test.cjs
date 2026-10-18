@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const contentScript = path.join(__dirname, '..', 'content.js');
 const storageListeners = new WeakMap();
 
-function page(origin, sharedStorage = new Map(), { failWrites = false } = {}) {
+function page(origin, sharedStorage = new Map(), { failWrites = false, readGate } = {}) {
   const classes = new Set();
   let messageListener;
   if (!storageListeners.has(sharedStorage)) storageListeners.set(sharedStorage, new Set());
@@ -15,7 +15,11 @@ function page(origin, sharedStorage = new Map(), { failWrites = false } = {}) {
   const chrome = {
     storage: {
       local: {
-        async get(key) { return { [key]: sharedStorage.get(key) }; },
+        async get(key) {
+          const snapshot = { [key]: sharedStorage.get(key) };
+          if (readGate) await readGate;
+          return snapshot;
+        },
         async set(values) {
           if (failWrites) throw Error('quota exceeded');
           for (const [key, value] of Object.entries(values)) {
@@ -142,4 +146,19 @@ test('leaves the class alone when it already matches', async () => {
   await view.send('toggle');
   view.pageTouchesClass();
   assert.equal(applied(view), true);
+});
+
+test('a change that arrives before the initial read is not overwritten by it', async () => {
+  const storage = new Map();
+  const key = 'lowercase-mood:https://example.com';
+  let release;
+  const readGate = new Promise((resolve) => { release = resolve; });
+  const view = page('https://example.com', storage, { readGate });
+  const other = page('https://example.com', storage);
+  assert.equal((await other.send('toggle')).enabled, true);
+  assert.equal(applied(view), true);
+  release();
+  assert.equal((await view.send('getState')).enabled, true);
+  assert.equal(applied(view), true);
+  assert.equal(storage.get(key), true);
 });
