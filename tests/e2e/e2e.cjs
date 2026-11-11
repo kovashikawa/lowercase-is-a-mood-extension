@@ -87,7 +87,30 @@ function check(name, ok, detail = '') {
     await popup.bringToFront();
     await popup.reload();
     await popup.waitForTimeout(300);
-    check('popup handles a non-scriptable page', (await popup.textContent('#status')) === 'Unavailable on this page');
+    const statusText = await popup.textContent('#status');
+    check('popup handles a non-scriptable page', /unavailable/i.test(statusText), statusText);
+    check('popup tells the user to reload the tab', /reload this tab/i.test(statusText), statusText);
+    const statusBox = await popup.evaluate(() => {
+      const el = document.getElementById('status');
+      const rect = el.getBoundingClientRect();
+      return { width: Math.round(rect.width), height: Math.round(rect.height), clip: getComputedStyle(el).clipPath };
+    });
+    check('the failure message is visible, not only announced', statusBox.height > 1 && statusBox.width > 1 && statusBox.clip === 'none', JSON.stringify(statusBox));
+
+    // #8 reported the popup opening at 58x106 with the letters stacked as a, /, A.
+    await popup.setViewportSize({ width: 58, height: 106 });
+    await popup.waitForTimeout(100);
+    const letters = await popup.evaluate(() => ['lowercase', 'slash', 'original'].map((id) => {
+      const rect = document.getElementById(id).getBoundingClientRect();
+      return { top: Math.round(rect.top), bottom: Math.round(rect.bottom), left: Math.round(rect.left) };
+    }));
+    const sameLine = Math.max(...letters.map((l) => l.top)) < Math.min(...letters.map((l) => l.bottom));
+    const leftToRight = letters[0].left < letters[1].left && letters[1].left < letters[2].left;
+    check(
+      'popup letters read a/A on one line at the reported popup width',
+      sameLine && leftToRight,
+      `tops=${letters.map((l) => l.top).join(',')} lefts=${letters.map((l) => l.left).join(',')}`,
+    );
 
     const granted = await popup.evaluate(() => chrome.permissions.getAll());
     check('granted permissions are storage only', JSON.stringify(granted.permissions) === '["storage"]', JSON.stringify(granted.permissions));
