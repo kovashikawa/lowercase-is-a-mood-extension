@@ -2,3 +2,8 @@ html.lowercase-mood-on,
 html.lowercase-mood-on * {
   text-transform: lowercase !important;
 }
+
+/* Editable text is the value the page receives, so it keeps its real case. */
+html.lowercase-mood-on :is(input, textarea, [contenteditable], [contenteditable] *) {
+  text-transform: none !important;
+}
