@@ -5,11 +5,15 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const os = require('node:os');
 
+const { requiredFiles } = require('../scripts/required-files.cjs');
+
 const root = path.join(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const manifest = JSON.parse(read('manifest.json'));
 
-const runtimeFiles = ['content.js', 'content.css', 'popup.html', 'popup.js'];
+// Same derived list that scripts/package.sh packages, so there is one source.
+const required = requiredFiles();
+const runtimeFiles = required.filter((file) => /\.(js|css|html)$/.test(file));
 
 const allowedPermissions = ['storage'];
 
@@ -20,15 +24,22 @@ test('manifest is Manifest V3 with a valid version', () => {
   assert.ok(manifest.description.length <= 132, 'store description limit is 132 characters');
 });
 
-test('every file the manifest references exists', () => {
-  const files = [
+test('every required file exists on disk', () => {
+  assert.ok(required.length > 1, 'the required file list must not be empty');
+  for (const file of required) {
+    assert.ok(fs.existsSync(path.join(root, file)), `${file} is referenced but missing`);
+  }
+});
+
+test('the required list covers everything the manifest references', () => {
+  const referenced = [
     manifest.action?.default_popup,
     ...(manifest.content_scripts ?? []).flatMap((s) => [...(s.js ?? []), ...(s.css ?? [])]),
     ...Object.values(manifest.icons ?? {}),
     ...Object.values(manifest.action?.default_icon ?? {}),
   ].filter(Boolean);
-  for (const file of files) {
-    assert.ok(fs.existsSync(path.join(root, file)), `${file} is referenced but missing`);
+  for (const file of referenced) {
+    assert.ok(required.includes(file), `${file} is in the manifest but not in the required list`);
   }
 });
 
@@ -67,8 +78,9 @@ test('package contains the manifest files and nothing extra', () => {
       encoding: 'utf8',
     }).trim();
     const listed = execFileSync('unzip', ['-Z1', zip], { encoding: 'utf8' }).split('\n').filter(Boolean).sort();
-    const expected = ['manifest.json', ...runtimeFiles, ...Object.values(manifest.icons ?? {})].sort();
-    assert.deepEqual(listed, expected);
+    const missing = required.filter((file) => !listed.includes(file));
+    assert.deepEqual(missing, [], `the zip is missing required file(s): ${missing.join(', ')}`);
+    assert.deepEqual(listed, [...required].sort(), 'the zip must contain exactly the required files');
     assert.match(path.basename(zip), new RegExp(`-${manifest.version.replaceAll('.', '\\.')}\\.zip$`));
   } finally {
     fs.rmSync(outDir, { recursive: true, force: true });
