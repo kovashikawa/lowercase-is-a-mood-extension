@@ -5,7 +5,13 @@ let tabId;
 function show(enabled) {
   button.setAttribute('aria-pressed', String(enabled));
   status.textContent = enabled ? 'Lowercase on this site' : 'Original case on this site';
+  status.classList.remove('shown');
   button.disabled = false;
+}
+
+function unavailable() {
+  status.textContent = 'Unavailable on this page. Reload this tab, then try again.';
+  status.classList.add('shown');
 }
 
 (async () => {
@@ -16,7 +22,7 @@ function show(enabled) {
     if (state?.error) throw Error(state.error);
     show(state.enabled);
   } catch {
-    status.textContent = 'Unavailable on this page';
+    unavailable();
   }
 })();
 
@@ -27,6 +33,6 @@ button.addEventListener('click', async () => {
     if (state?.error) throw Error(state.error);
     show(state.enabled);
   } catch {
-    status.textContent = 'Unavailable on this page';
+    unavailable();
   }
 });
