@@ -5,7 +5,10 @@ const path = require('node:path');
 const { chromium } = require('playwright');
 
 const root = path.join(__dirname, '..', '..');
-const html = '<!doctype html><html><body><h1 id="h">Hello WORLD</h1><p id="p">Mixed Case Text</p><input id="i" value="KeepMe"></body></html>';
+const html = '<!doctype html><html><body><h1 id="h">Hello WORLD</h1><p id="p">Mixed Case Text</p>'
+  + '<input id="i" value="KeepMe"><textarea id="t">KeepMe Too</textarea>'
+  + '<div id="ce" contenteditable="true">Editable TEXT <span id="ce-child">Nested VALUE</span></div>'
+  + '</body></html>';
 
 let failed = 0;
 function check(name, ok, detail = '') {
@@ -66,6 +69,10 @@ function check(name, ok, detail = '') {
     check('text is lowercase', (await transform(page, '#h')) === 'lowercase' && (await transform(page, '#p')) === 'lowercase');
     check('source text unchanged', (await page.textContent('#h')) === 'Hello WORLD');
     check('form value unchanged', (await page.inputValue('#i')) === 'KeepMe');
+    check('input is not transformed', (await transform(page, '#i')) === 'none', await transform(page, '#i'));
+    check('textarea is not transformed', (await transform(page, '#t')) === 'none', await transform(page, '#t'));
+    check('contenteditable is not transformed', (await transform(page, '#ce')) === 'none', await transform(page, '#ce'));
+    check('contenteditable children are not transformed', (await transform(page, '#ce-child')) === 'none', await transform(page, '#ce-child'));
 
     await page.evaluate(() => { document.documentElement.className = 'page-owned'; });
     await page.waitForTimeout(100);
