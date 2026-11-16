@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}
+body{width:1280px;height:800px;background:#F4F4F4;color:#1E1E1E;font:16px/1.55 system-ui,-apple-system,"Helvetica Neue",sans-serif;position:relative;overflow:hidden}
+.top{position:absolute;top:34px;left:64px;font-size:15px;color:#555}
+.row{position:absolute;left:64px;right:64px;top:92px;display:flex;gap:48px}
+.col{flex:1}
+.win{background:#fff;border:1px solid #D8D8D8;border-radius:12px;height:566px;overflow:hidden}
+.bar{height:46px;border-bottom:1px solid #E4E4E4;display:flex;align-items:center;padding:0 14px;gap:10px;position:relative}
+.dots{display:flex;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;background:#D8D8D8}
+.url{flex:1;height:24px;border-radius:12px;background:#F4F4F4;display:flex;align-items:center;padding:0 12px;font-size:13px;color:#666}
+.ic{width:24px;height:24px;border-radius:6px;background:#1E1E1E;color:#fff;font:700 12px/24px system-ui,sans-serif;text-align:center}
+.body{padding:30px 34px;position:relative}
+.kicker{font-size:13px;color:#777;margin-bottom:14px}
+h1{font-size:26px;line-height:1.2;font-weight:700;margin-bottom:12px;letter-spacing:-.01em}
+p{font-size:15px;color:#333;margin-bottom:14px}
+.meta{font-size:13px;color:#777}
+.low *{text-transform:lowercase}
+.low .pop,.low .pop *{text-transform:none}
+.pop{position:absolute;top:-2px;right:24px;background:#fff;border:1px solid #CFCFCF;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.12);padding:10px 14px}
+.tog{font:400 26px/1 system-ui,sans-serif;display:block;padding:4px 6px}
+.tog span{display:inline-block}
+.tog .a,.tog .A{min-width:.68em;text-align:center}
+.tog .s{opacity:.45}
+.on .a,.off .A{font-weight:700}
+.cap{margin-top:22px;font-size:15px;color:#555;text-align:center}
+</style></head><body>
+<div class="top">One site at a time. The choice sticks through reloads and new tabs.</div>
+<div class="row">
+ <div class="col"><div class="win">
+   <div class="bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+     <div class="url">fieldnotes.example</div><div class="ic">a</div></div>
+   <div class="body low">
+     <div class="pop"><span class="tog on"><span class="a">a</span><span class="s">/</span><span class="A">A</span></span></div>
+     <div class="kicker">Design · Essays</div>
+     <h1>Why Every Interface Is Shouting At You</h1>
+     <p>Capital letters carry a lot of weight. Titles, buttons and menus all compete for attention before you read a single word.</p>
+     <p>Flip the switch and the page relaxes. Same words, same layout, quieter.</p>
+     <div class="meta">By Marta Quinn · 4 Min Read</div>
+   </div>
+ </div><div class="cap">This site: lowercase, remembered</div></div>
+ <div class="col"><div class="win">
+   <div class="bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+     <div class="url">docs.example.org</div><div class="ic">A</div></div>
+   <div class="body">
+     <div class="pop"><span class="tog off"><span class="a">a</span><span class="s">/</span><span class="A">A</span></span></div>
+     <div class="kicker">Reference · API</div>
+     <h1>Get Started With The REST API</h1>
+     <p>Every request needs an Authorization header. The token is issued once and stays valid until it is revoked.</p>
+     <p>Rate limits are per project, not per key, so a shared token is safe for internal tooling.</p>
+     <div class="meta">Updated 3 Days Ago · v2.4</div>
+   </div>
+ </div><div class="cap">Every other site: untouched</div></div>
+</div></body></html>
