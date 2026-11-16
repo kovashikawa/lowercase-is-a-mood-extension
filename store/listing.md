@@ -1,4 +1,4 @@
-# Chrome Web Store listing: Lowercase Is a Mood v0.1.0
+# Chrome Web Store listing: Lowercase Is a Mood v1.0.0
 
 Paste each block into the matching field of the developer dashboard.
 
@@ -77,4 +77,4 @@ https://github.com/kovashikawa/lowercase-is-a-mood-extension/blob/main/PRIVACY.m
 Public. Unlisted is the option if you want a link-only first release.
 
 **Upload**
-Use the zip attached to the v0.1.0 GitHub Release, not a local build, so the store copy traces to the attested build.
+Use the zip attached to the v1.0.0 GitHub Release, not a local build, so the store copy traces to the attested build.
