@@ -4,3 +4,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+      # CodeQL hard-fails when init and analyze are bumped in separate PRs.
+      codeql-action:
+        patterns:
+          - github/codeql-action/*
