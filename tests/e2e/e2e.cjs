@@ -5,7 +5,10 @@ const path = require('node:path');
 const { chromium } = require('playwright');
 
 const root = path.join(__dirname, '..', '..');
-const html = '<!doctype html><html><body><h1 id="h">Hello WORLD</h1><p id="p">Mixed Case Text</p><input id="i" value="KeepMe"></body></html>';
+const html = '<!doctype html><html><body><h1 id="h">Hello WORLD</h1><p id="p">Mixed Case Text</p>'
+  + '<input id="i" value="KeepMe"><textarea id="t">KeepMe Too</textarea>'
+  + '<div id="ce" contenteditable="true">Editable TEXT <span id="ce-child">Nested VALUE</span></div>'
+  + '</body></html>';
 
 let failed = 0;
 function check(name, ok, detail = '') {
@@ -66,6 +69,10 @@ function check(name, ok, detail = '') {
     check('text is lowercase', (await transform(page, '#h')) === 'lowercase' && (await transform(page, '#p')) === 'lowercase');
     check('source text unchanged', (await page.textContent('#h')) === 'Hello WORLD');
     check('form value unchanged', (await page.inputValue('#i')) === 'KeepMe');
+    check('input is not transformed', (await transform(page, '#i')) === 'none', await transform(page, '#i'));
+    check('textarea is not transformed', (await transform(page, '#t')) === 'none', await transform(page, '#t'));
+    check('contenteditable is not transformed', (await transform(page, '#ce')) === 'none', await transform(page, '#ce'));
+    check('contenteditable children are not transformed', (await transform(page, '#ce-child')) === 'none', await transform(page, '#ce-child'));
 
     await page.evaluate(() => { document.documentElement.className = 'page-owned'; });
     await page.waitForTimeout(100);
@@ -87,7 +94,30 @@ function check(name, ok, detail = '') {
     await popup.bringToFront();
     await popup.reload();
     await popup.waitForTimeout(300);
-    check('popup handles a non-scriptable page', (await popup.textContent('#status')) === 'Unavailable on this page');
+    const statusText = await popup.textContent('#status');
+    check('popup handles a non-scriptable page', /unavailable/i.test(statusText), statusText);
+    check('popup tells the user to reload the tab', /reload this tab/i.test(statusText), statusText);
+    const statusBox = await popup.evaluate(() => {
+      const el = document.getElementById('status');
+      const rect = el.getBoundingClientRect();
+      return { width: Math.round(rect.width), height: Math.round(rect.height), clip: getComputedStyle(el).clipPath };
+    });
+    check('the failure message is visible, not only announced', statusBox.height > 1 && statusBox.width > 1 && statusBox.clip === 'none', JSON.stringify(statusBox));
+
+    // #8 reported the popup opening at 58x106 with the letters stacked as a, /, A.
+    await popup.setViewportSize({ width: 58, height: 106 });
+    await popup.waitForTimeout(100);
+    const letters = await popup.evaluate(() => ['lowercase', 'slash', 'original'].map((id) => {
+      const rect = document.getElementById(id).getBoundingClientRect();
+      return { top: Math.round(rect.top), bottom: Math.round(rect.bottom), left: Math.round(rect.left) };
+    }));
+    const sameLine = Math.max(...letters.map((l) => l.top)) < Math.min(...letters.map((l) => l.bottom));
+    const leftToRight = letters[0].left < letters[1].left && letters[1].left < letters[2].left;
+    check(
+      'popup letters read a/A on one line at the reported popup width',
+      sameLine && leftToRight,
+      `tops=${letters.map((l) => l.top).join(',')} lefts=${letters.map((l) => l.left).join(',')}`,
+    );
 
     const granted = await popup.evaluate(() => chrome.permissions.getAll());
     check('granted permissions are storage only', JSON.stringify(granted.permissions) === '["storage"]', JSON.stringify(granted.permissions));

@@ -15,7 +15,14 @@ function popup({ available = true, enabled = false, failToggle = false, errorOnT
     addEventListener(name, callback) { this.listeners[name] = callback; },
     async click() { await this.listeners.click(); },
   };
-  const status = { textContent: '' };
+  const shown = new Set();
+  const status = {
+    textContent: '',
+    classList: {
+      add(name) { shown.add(name); },
+      remove(name) { shown.delete(name); },
+    },
+  };
   const chrome = {
     tabs: {
       async query() { return [{ id: 1 }]; },
@@ -36,7 +43,12 @@ function popup({ available = true, enabled = false, failToggle = false, errorOnT
     chrome,
     document: { getElementById(id) { return id === 'toggle' ? button : status; } },
   }, { filename: popupScript });
-  return { button, status, async ready() { await new Promise((resolve) => setImmediate(resolve)); } };
+  return {
+    button,
+    status,
+    statusIsVisible: () => shown.has('shown'),
+    async ready() { await new Promise((resolve) => setImmediate(resolve)); },
+  };
 }
 
 test('opens in the saved state and switches both ways', async () => {
@@ -44,10 +56,12 @@ test('opens in the saved state and switches both ways', async () => {
   await view.ready();
   assert.equal(view.button.disabled, false);
   assert.equal(view.button.attributes['aria-pressed'], 'true');
+  assert.equal(view.statusIsVisible(), false, 'no visible message when the page responds');
   await view.button.click();
   assert.equal(view.button.attributes['aria-pressed'], 'false');
   await view.button.click();
   assert.equal(view.button.attributes['aria-pressed'], 'true');
+  assert.equal(view.statusIsVisible(), false);
 });
 
 test('disables the toggle on pages Chrome does not allow extensions to change', async () => {
@@ -55,6 +69,8 @@ test('disables the toggle on pages Chrome does not allow extensions to change', 
   await view.ready();
   assert.equal(view.button.disabled, true);
   assert.match(view.status.textContent, /unavailable/i);
+  assert.match(view.status.textContent, /reload this tab/i);
+  assert.equal(view.statusIsVisible(), true, 'the failure message must be visible, not only announced');
 });
 
 test('shows unavailable when a click cannot reach the page', async () => {
@@ -62,6 +78,8 @@ test('shows unavailable when a click cannot reach the page', async () => {
   await view.ready();
   await view.button.click();
   assert.match(view.status.textContent, /unavailable/i);
+  assert.match(view.status.textContent, /reload this tab/i);
+  assert.equal(view.statusIsVisible(), true, 'the failure message must be visible, not only announced');
 });
 
 test('shows unavailable when the page reports a save error', async () => {
@@ -69,6 +87,8 @@ test('shows unavailable when the page reports a save error', async () => {
   await view.ready();
   await view.button.click();
   assert.match(view.status.textContent, /unavailable/i);
+  assert.match(view.status.textContent, /reload this tab/i);
+  assert.equal(view.statusIsVisible(), true, 'the failure message must be visible, not only announced');
 });
 
 test('shows unavailable when the page reports an error on load', async () => {
@@ -76,6 +96,8 @@ test('shows unavailable when the page reports an error on load', async () => {
   await view.ready();
   assert.equal(view.button.disabled, true);
   assert.match(view.status.textContent, /unavailable/i);
+  assert.match(view.status.textContent, /reload this tab/i);
+  assert.equal(view.statusIsVisible(), true, 'the failure message must be visible, not only announced');
 });
 
 test('shows unavailable when the page sends no reply', async () => {
@@ -83,4 +105,6 @@ test('shows unavailable when the page sends no reply', async () => {
   await view.ready();
   assert.equal(view.button.disabled, true);
   assert.match(view.status.textContent, /unavailable/i);
+  assert.match(view.status.textContent, /reload this tab/i);
+  assert.equal(view.statusIsVisible(), true, 'the failure message must be visible, not only announced');
 });

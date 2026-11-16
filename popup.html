@@ -15,6 +15,7 @@
       color: inherit;
       font: 400 26px/1 system-ui, sans-serif;
       cursor: pointer;
+      white-space: nowrap;
     }
     button:disabled { opacity: .35; cursor: default; }
     button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
@@ -33,6 +34,18 @@
       height: 1px;
       overflow: hidden;
       clip-path: inset(50%);
+    }
+    /* Failures need to be readable, not only announced to screen readers. */
+    #status.shown {
+      position: static;
+      width: auto;
+      height: auto;
+      max-width: 20ch;
+      overflow: visible;
+      clip-path: none;
+      margin: 8px 0 0;
+      font: 400 12px/1.35 system-ui, sans-serif;
+      opacity: .75;
     }
     @media (prefers-reduced-motion: reduce) {
       #lowercase, #original { transition: none; }
