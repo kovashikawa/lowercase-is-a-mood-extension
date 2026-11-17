@@ -8,7 +8,8 @@ out_dir="${OUT_DIR:-dist}"
 mkdir -p "$out_dir"
 out="$(cd "$out_dir" && pwd)/lowercase-is-a-mood-$version.zip"
 
-files="manifest.json content.js content.css popup.html popup.js icons/icon-16.png icons/icon-48.png icons/icon-128.png"
+# Derived from manifest.json and popup.html, never hand-maintained here.
+files=$(node scripts/required-files.cjs)
 
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT

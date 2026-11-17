@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}
+body{width:1280px;height:800px;background:#F4F4F4;color:#1E1E1E;font:16px/1.55 system-ui,-apple-system,"Helvetica Neue",sans-serif;position:relative;overflow:hidden}
+.top{position:absolute;top:34px;left:64px;font-size:15px;color:#555}
+.left{position:absolute;left:64px;top:100px;width:560px}
+.card{background:#fff;border:1px solid #D8D8D8;border-radius:12px;padding:34px 40px;margin-bottom:32px;display:flex;align-items:center;gap:34px}
+.card:last-child{margin-bottom:0}
+.tog{font:400 86px/1 system-ui,sans-serif;letter-spacing:-.02em}
+.tog span{display:inline-block}
+.tog .a,.tog .A{min-width:.66em;text-align:center}
+.tog .s{opacity:.45;padding:0 .04em}
+.on .a,.off .A{font-weight:700}
+.st{font-size:19px;font-weight:600;margin-bottom:4px}
+.sd{font-size:15px;color:#666}
+.right{position:absolute;left:688px;right:64px;top:100px}
+h2{font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin-bottom:28px}
+li{list-style:none;padding:22px 0;border-top:1px solid #DCDCDC;font-size:17px;color:#333}
+li:last-child{border-bottom:1px solid #DCDCDC}
+li b{display:block;font-size:14px;color:#777;font-weight:600;margin-bottom:6px;letter-spacing:.02em}
+.foot{position:absolute;left:688px;right:64px;bottom:64px;font-size:15px;color:#777}
+</style></head><body>
+<div class="top">The whole interface is two letters. Bold is the active mode.</div>
+<div class="left">
+ <div class="card">
+   <span class="tog on"><span class="a">a</span><span class="s">/</span><span class="A">A</span></span>
+   <div><div class="st">a</div><div class="sd">Lowercase. The page renders in lowercase.</div></div>
+ </div>
+ <div class="card">
+   <span class="tog off"><span class="a">a</span><span class="s">/</span><span class="A">A</span></span>
+   <div><div class="st">A</div><div class="sd">Original case. The page renders as written.</div></div>
+ </div>
+</div>
+<div class="right">
+ <h2>Nothing else moves.</h2>
+ <ul>
+  <li><b>What it changes</b>How text is displayed, through one CSS rule.</li>
+  <li><b>What it does not touch</b>Page text, form values, page source, feeds.</li>
+  <li><b>What it stores</b>One on or off value per site, in your browser.</li>
+  <li><b>What it never does</b>A network request, analytics, an account, remote code.</li>
+ </ul>
+</div>
+<div class="foot">The source is public, and every release is built in public CI with a signed build provenance attestation.</div>
+</body></html>
