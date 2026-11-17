@@ -36,8 +36,21 @@ Good to know
 
 Support: dev@kovashikawa.com
 
-**Screenshot**
-`screenshot-1280x800.png` (1280x800, 24-bit PNG, no alpha). It shows the same page in original case and in lowercase, with the popup in each state.
+**Screenshots** (1280x800, 24-bit PNG, no alpha; upload in this order)
+1. `screenshot-1280x800.png` — the same page in original case and in lowercase, with the popup in each state.
+2. `screenshot-per-site-1280x800.png` — two sites side by side, one switched to lowercase and one untouched, with the popup chip in each.
+3. `screenshot-popup-1280x800.png` — the a/A switch in both states, and what the extension does and does not touch.
+
+**Small promo tile** (440x280, 24-bit PNG, no alpha)
+`promo-tile-440x280.png` — dark tile, white a/A with the a bold, name and "one switch per site" under it.
+
+**Marquee** (1400x560, 24-bit PNG, no alpha)
+`marquee-1400x560.png` — dark banner, the a/A lockup on the left and the same headline in original case and in lowercase on the right.
+
+Every image is a composed mockup, not a browser capture. Regenerate them with `node store/render.mjs` (needs `npm ci` for Playwright and `uv` for Pillow); the HTML sources sit next to the PNGs.
+
+**Promotional video**
+YouTube link field. `store/demo-<date>.mp4` is the real screen recording of the pinned icon, the popup and the content script; upload it as private, then paste the URL here.
 
 **Homepage URL**
 https://github.com/kovashikawa/lowercase-is-a-mood-extension
